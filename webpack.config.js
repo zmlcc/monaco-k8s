@@ -5,6 +5,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 // module.exports = {
 //   context: path.resolve(__dirname, 'src'),
 //   entry: {
@@ -55,7 +56,8 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
-              }
+              },
+             
         ]
     },
 
@@ -68,6 +70,9 @@ module.exports = {
             template: "./src/index.html", //new 一个这个插件的实例，并传入相关的参数
             filename: 'index.html'
         }),
+        new CopyWebpackPlugin([
+            { from: './src/schema.json', to: './' },
+          ]),
         new CleanWebpackPlugin(['dist']),
         // new UglifyJSPlugin()
         new MonacoWebpackPlugin({

@@ -51,6 +51,7 @@ export class YAMLHover {
 		if (!node || (node.type === 'object' || node.type === 'array') && offset > node.start + 1 && offset < node.end - 1) {
 			return this.promise.resolve(void 0);
 		}
+		console.log("F**K", node)
 		let hoverRangeNode = node;
 
 		// use the property description when hovering over an object key

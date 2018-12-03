@@ -1,6 +1,6 @@
 // import { getLanguageService, TextDocument } from "vscode-json-languageservice";
-import { TextDocument } from "vscode-json-languageservice";
-// import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient/lib/monaco-converter';
+import { TextDocument, Position } from "vscode-json-languageservice";
+import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient/lib/monaco-converter';
 
 // import * as monaco from 'monaco-editor'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -10,6 +10,8 @@ import * as ys from '../languageservice/yamlLanguageService'
 import { xhr, XHRResponse, configure as configureHttpRequests, getErrorStatusDescription } from 'request-light';
 
 import * as URL from 'url';
+
+import {parse} from '../languageservice/parser/yamlParser'
 
 const LANGUAGE_ID = 'yaml';
 const MODEL_URI = 'inmemory://model.yaml'
@@ -63,6 +65,18 @@ function createDocument(model: monaco.editor.IReadOnlyModel) {
     return TextDocument.create(MODEL_URI, model.getModeId(), model.getVersionId(), model.getValue());
 }
 
+function asPosition(lineNumber: number, column: number): Position{
+    const line = lineNumber === undefined || lineNumber === null ? undefined : lineNumber - 1;
+    const character = column === undefined || column === null ? undefined : column - 1;
+    return {
+        line, character
+    };
+}
+
+var schemaProvider = (uri: string) : monaco.Thenable<string> => {
+    const schemaJson = "http://localhost:8080/schema.json"
+    return Promise.resolve<string>(schemaJson)
+}
 // function resovleSchema(url: string): Promise<string> {
 //     const promise = new Promise<string>((resolve, reject) => {
 //         const xhr = new XMLHttpRequest();
@@ -75,7 +89,7 @@ function createDocument(model: monaco.editor.IReadOnlyModel) {
 // }
 
 // const m2p = new MonacoToProtocolConverter();
-// const p2m = new ProtocolToMonacoConverter();
+const p2m = new ProtocolToMonacoConverter();
 // const jsonService = getLanguageService({
 //     schemaRequestService: resovleSchema
 // });
@@ -101,6 +115,7 @@ let workspaceContext = {
 // const  yamlService = ys.getLanguageService()
 
 const yss = ys.getLanguageService(schemaRequestService, workspaceContext, []);
+yss.registerCustomSchemaProvider(schemaProvider)
 // const pendingValidationRequests = new Map<string, number>();
 
 // monaco.languages.registerCompletionItemProvider(LANGUAGE_ID, {
@@ -137,14 +152,22 @@ monaco.languages.registerHoverProvider(LANGUAGE_ID, {
     provideHover(model, position, token): monaco.languages.Hover | monaco.Thenable<monaco.languages.Hover> | null {
         console.log(model)
         const document = createDocument(model);
+        const yamlDoc = parse(document.getText())
+        const pp = asPosition(position.lineNumber, position.column)
         // const jsonDocument = jsonService.parseJSONDocument(document);
         // return jsonService.doHover(document, m2p.asPosition(position.lineNumber, position.column), jsonDocument).then((hover) => {
         //     return p2m.asHover(hover)!;
         // });
         console.log(document)
-        yss.doHover(document, position, "F**K")
+        console.log(yamlDoc)
+        const result = yss.doHover(document, pp, yamlDoc).then((hover) => {
+            return p2m.asHover(hover)!;
+        })
+        console.log(result)
+
+        return result
         
-        return null
+        // return null
     }
 });
 
