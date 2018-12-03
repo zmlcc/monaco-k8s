@@ -1,0 +1,35 @@
+{
+  "name": "tmk",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "awesome-typescript-loader": "^5.2.1",
+    "clean-webpack-plugin": "^1.0.0",
+    "css-loader": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "js-yaml": "^3.12.0",
+    "jsonc-parser": "^2.0.2",
+    "monaco-editor-webpack-plugin": "^1.7.0",
+    "request-light": "^0.2.4",
+    "style-loader": "^0.23.1",
+    "terser-webpack-plugin": "^1.1.0",
+    "typescript": "^3.2.1",
+    "vscode-json-languageservice": "^3.2.1",
+    "vscode-languageserver-types": "^3.13.0",
+    "vscode-nls": "^4.0.0",
+    "vscode-uri": "^1.0.6",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10",
+    "yaml-ast-parser": "^0.0.43"
+  },
+  "scripts": {
+    "dev": "webpack-dev-server --open --mode development",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "@types/node": "^10.12.11",
+    "monaco-editor": "^0.15.6"
+  }
+}
