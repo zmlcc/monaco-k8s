@@ -72,8 +72,9 @@ module.exports = {
         }),
         new CopyWebpackPlugin([
             { from: './src/schema.json', to: './' },
+            { from: './src/_definitions.json', to: './' },
           ]),
-        new CleanWebpackPlugin(['dist']),
+        new CleanWebpackPlugin(['dist/**']),
         // new UglifyJSPlugin()
         new MonacoWebpackPlugin({
             languages: ["yaml"],

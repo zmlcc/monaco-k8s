@@ -1,6 +1,6 @@
 // import { getLanguageService, TextDocument } from "vscode-json-languageservice";
-import { TextDocument, Position } from "vscode-json-languageservice";
-import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from 'monaco-languageclient/lib/monaco-converter';
+import { TextDocument, Position } from "vscode-languageserver-types/lib/umd/main";
+import { MonacoToProtocolConverter, ProtocolToMonacoConverter } from './monaco-convert';
 
 // import * as monaco from 'monaco-editor'
 import * as monaco from 'monaco-editor/esm/vs/editor/editor.api';
@@ -74,7 +74,7 @@ function asPosition(lineNumber: number, column: number): Position{
 }
 
 var schemaProvider = (uri: string) : monaco.Thenable<string> => {
-    const schemaJson = "http://localhost:8080/schema.json"
+    const schemaJson = "http://localhost:8000/schema.json"
     return Promise.resolve<string>(schemaJson)
 }
 // function resovleSchema(url: string): Promise<string> {
@@ -98,10 +98,13 @@ let schemaRequestService = (uri: string): monaco.Thenable<string> => {
 	//For the case when we are multi root and specify a workspace location
 
 
-	let headers = { 'Accept-Encoding': 'gzip, deflate' };
+    let headers = { 'Accept-Encoding': 'br',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8'
+};
 	return xhr({ url: uri, followRedirects: 5, headers }).then(response => {
 		return response.responseText;
 	}, (error: XHRResponse) => {
+        console.log("F**KKK", error)
 		return Promise.reject(error.responseText || getErrorStatusDescription(error.status) || error.toString());
 	});
 };
@@ -160,12 +163,12 @@ monaco.languages.registerHoverProvider(LANGUAGE_ID, {
         // });
         console.log(document)
         console.log(yamlDoc)
-        const result = yss.doHover(document, pp, yamlDoc).then((hover) => {
-            return p2m.asHover(hover)!;
-        })
+        const result = yss.doHover(document, pp, yamlDoc)
         console.log(result)
 
-        return result
+        return result.then((hover) => {
+            return p2m.asHover(hover)!;
+        })
         
         // return null
     }

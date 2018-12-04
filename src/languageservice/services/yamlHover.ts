@@ -51,9 +51,8 @@ export class YAMLHover {
 		if (!node || (node.type === 'object' || node.type === 'array') && offset > node.start + 1 && offset < node.end - 1) {
 			return this.promise.resolve(void 0);
 		}
-		console.log("F**K", node)
 		let hoverRangeNode = node;
-
+		
 		// use the property description when hovering over an object key
 		if (node.type === 'string') {
 			let stringNode = <Parser.StringASTNode>node;
@@ -65,6 +64,7 @@ export class YAMLHover {
 				}
 			}
 		}
+		console.log("F**K", node)
 
 		let hoverRange = Range.create(document.positionAt(hoverRangeNode.start), document.positionAt(hoverRangeNode.end));
 
@@ -88,16 +88,21 @@ export class YAMLHover {
 		return this.schemaService.getSchemaForResource(document.uri).then((schema) => {
 			if (schema) {
 				let newSchema = schema;
+				// console.log("F**K22", schema)
 				if (schema.schema && schema.schema.schemaSequence && schema.schema.schemaSequence[currentDocIndex]) {
 					newSchema = new SchemaService.ResolvedSchema(schema.schema.schemaSequence[currentDocIndex]);
 				}
+				// console.log("F**K22", newSchema.schema, node.start)
 				let matchingSchemas = currentDoc.getMatchingSchemas(newSchema.schema, node.start);
-
 				let title: string = null;
 				let markdownDescription: string = null;
 				let markdownEnumValueDescription = null, enumValue = null;
 				matchingSchemas.every((s) => {
+					// console.log("FUCK4**", s.node === node)
+					// console.log("FUCK4**", !s.inverted)
+					// console.log("FUCK4**", s.schema)
 					if (s.node === node && !s.inverted && s.schema) {
+						console.log("F**K33", s.schema)
 						title = title || s.schema.title;
 						markdownDescription = markdownDescription || s.schema["markdownDescription"] || toMarkdown(s.schema.description);
 						if (s.schema.enum)  {
@@ -117,6 +122,7 @@ export class YAMLHover {
 					}
 					return true;
 				});
+				
 				let result = '';
 				if (title) {
 					result = toMarkdown(title);
