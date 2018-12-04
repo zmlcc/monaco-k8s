@@ -1002,7 +1002,6 @@ export class JSONDocument {
 		if (this.root && schema) {
 			this.root.validate(schema, validationResult, matchingSchemas);
 		}
-		console.log("FUCK**3", validationResult, matchingSchemas.schemas)
 		return matchingSchemas.schemas;
 	}
 

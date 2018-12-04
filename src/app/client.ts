@@ -65,13 +65,13 @@ function createDocument(model: monaco.editor.IReadOnlyModel) {
     return TextDocument.create(MODEL_URI, model.getModeId(), model.getVersionId(), model.getValue());
 }
 
-function asPosition(lineNumber: number, column: number): Position{
-    const line = lineNumber === undefined || lineNumber === null ? undefined : lineNumber - 1;
-    const character = column === undefined || column === null ? undefined : column - 1;
-    return {
-        line, character
-    };
-}
+// function asPosition(lineNumber: number, column: number): Position{
+//     const line = lineNumber === undefined || lineNumber === null ? undefined : lineNumber - 1;
+//     const character = column === undefined || column === null ? undefined : column - 1;
+//     return {
+//         line, character
+//     };
+// }
 
 var schemaProvider = (uri: string) : monaco.Thenable<string> => {
     const schemaJson = "http://localhost:8000/schema.json"
@@ -88,7 +88,7 @@ var schemaProvider = (uri: string) : monaco.Thenable<string> => {
 //     return promise;
 // }
 
-// const m2p = new MonacoToProtocolConverter();
+const m2p = new MonacoToProtocolConverter();
 const p2m = new ProtocolToMonacoConverter();
 // const jsonService = getLanguageService({
 //     schemaRequestService: resovleSchema
@@ -104,7 +104,6 @@ let schemaRequestService = (uri: string): monaco.Thenable<string> => {
 	return xhr({ url: uri, followRedirects: 5, headers }).then(response => {
 		return response.responseText;
 	}, (error: XHRResponse) => {
-        console.log("F**KKK", error)
 		return Promise.reject(error.responseText || getErrorStatusDescription(error.status) || error.toString());
 	});
 };
@@ -153,16 +152,16 @@ yss.registerCustomSchemaProvider(schemaProvider)
 
 monaco.languages.registerHoverProvider(LANGUAGE_ID, {
     provideHover(model, position, token): monaco.languages.Hover | monaco.Thenable<monaco.languages.Hover> | null {
-        console.log(model)
+        // console.log(model)
         const document = createDocument(model);
         const yamlDoc = parse(document.getText())
-        const pp = asPosition(position.lineNumber, position.column)
+        const pp = m2p.asPosition(position.lineNumber, position.column)
         // const jsonDocument = jsonService.parseJSONDocument(document);
         // return jsonService.doHover(document, m2p.asPosition(position.lineNumber, position.column), jsonDocument).then((hover) => {
         //     return p2m.asHover(hover)!;
         // });
-        console.log(document)
-        console.log(yamlDoc)
+        // console.log(document)
+        // console.log(yamlDoc)
         const result = yss.doHover(document, pp, yamlDoc)
         console.log(result)
 

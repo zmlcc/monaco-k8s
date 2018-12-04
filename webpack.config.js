@@ -1,6 +1,6 @@
 const path = require('path');
 // const webpack = require('webpack');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
 // const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
@@ -66,11 +66,12 @@ module.exports = {
       },
 
     plugins: [
-        new HtmlWebpackPlugin({
-            template: "./src/index.html", //new 一个这个插件的实例，并传入相关的参数
-            filename: 'index.html'
-        }),
+        // new HtmlWebpackPlugin({
+        //     template: "./src/index.html", //new 一个这个插件的实例，并传入相关的参数
+        //     filename: 'index.html'
+        // }),
         new CopyWebpackPlugin([
+            { from: './src/index.html', to: './' },
             { from: './src/schema.json', to: './' },
             { from: './src/_definitions.json', to: './' },
           ]),
